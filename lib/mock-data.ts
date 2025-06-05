@@ -1,5 +1,5 @@
 import { InventoryItem, Category, Location, Sale, Task, TeamMember, DashboardStats } from './types'
-import { generateId, generateInternalId } from './utils'
+import { generateId, generateInternalId, generateSerialNumber } from './utils'
 
 // Categories
 export const mockCategories: Category[] = [
@@ -8,7 +8,7 @@ export const mockCategories: Category[] = [
     name: 'Electronics',
     description: 'Electronic devices and components',
     color: '#3B82F6',
-    itemCount: 15,
+    itemCount: 4,
     createdAt: '2024-01-01T00:00:00Z'
   },
   {
@@ -16,7 +16,7 @@ export const mockCategories: Category[] = [
     name: 'Furniture',
     description: 'Office and home furniture',
     color: '#10B981',
-    itemCount: 8,
+    itemCount: 3,
     createdAt: '2024-01-01T00:00:00Z'
   },
   {
@@ -24,7 +24,7 @@ export const mockCategories: Category[] = [
     name: 'Office Supplies',
     description: 'General office supplies and stationery',
     color: '#F59E0B',
-    itemCount: 25,
+    itemCount: 2,
     createdAt: '2024-01-01T00:00:00Z'
   },
   {
@@ -32,7 +32,7 @@ export const mockCategories: Category[] = [
     name: 'Tools',
     description: 'Hardware tools and equipment',
     color: '#EF4444',
-    itemCount: 12,
+    itemCount: 1,
     createdAt: '2024-01-01T00:00:00Z'
   }
 ]
@@ -110,7 +110,7 @@ export const mockInventoryItems: InventoryItem[] = [
     purchasePrice: 1200,
     purchaseDate: '2024-01-15',
     purchasedFrom: 'Dell Direct',
-    serialNumber: 'DL-XPS13-001',
+    serialNumber: generateSerialNumber('DL-XPS13'),
     categoryId: mockCategories[0].id,
     locationId: mockLocations[1].id,
     status: 'in-stock',
@@ -141,7 +141,7 @@ export const mockInventoryItems: InventoryItem[] = [
     purchasePrice: 45,
     purchaseDate: '2024-01-05',
     purchasedFrom: 'Amazon',
-    serialNumber: 'LG-M705-001',
+    serialNumber: generateSerialNumber('LG-M705'),
     categoryId: mockCategories[0].id,
     locationId: mockLocations[2].id,
     status: 'in-stock',
@@ -149,6 +149,114 @@ export const mockInventoryItems: InventoryItem[] = [
     internalId: generateInternalId(),
     createdAt: '2024-01-05T00:00:00Z',
     updatedAt: '2024-01-05T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'iPhone 15 Pro',
+    quantity: 8,
+    purchasePrice: 999,
+    purchaseDate: '2024-01-20',
+    purchasedFrom: 'Apple Store',
+    serialNumber: generateSerialNumber('IP-15P'),
+    categoryId: mockCategories[0].id,
+    locationId: mockLocations[1].id,
+    status: 'in-stock',
+    minStockLevel: 3,
+    internalId: generateInternalId(),
+    createdAt: '2024-01-20T00:00:00Z',
+    updatedAt: '2024-01-20T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Standing Desk Adjustable',
+    quantity: 3,
+    purchasePrice: 450,
+    purchaseDate: '2024-01-12',
+    purchasedFrom: 'IKEA',
+    categoryId: mockCategories[1].id,
+    locationId: mockLocations[0].id,
+    status: 'in-stock',
+    minStockLevel: 2,
+    internalId: generateInternalId(),
+    createdAt: '2024-01-12T00:00:00Z',
+    updatedAt: '2024-01-12T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Printer Paper A4 - 500 sheets',
+    quantity: 25,
+    purchasePrice: 8,
+    purchaseDate: '2024-01-08',
+    purchasedFrom: 'Staples',
+    categoryId: mockCategories[2].id,
+    locationId: mockLocations[2].id,
+    status: 'in-stock',
+    minStockLevel: 10,
+    internalId: generateInternalId(),
+    createdAt: '2024-01-08T00:00:00Z',
+    updatedAt: '2024-01-08T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Drill Set Professional',
+    quantity: 0,
+    purchasePrice: 180,
+    purchaseDate: '2024-01-03',
+    purchasedFrom: 'Home Depot',
+    serialNumber: generateSerialNumber('HD-DRILL'),
+    categoryId: mockCategories[3].id,
+    locationId: mockLocations[0].id,
+    status: 'out-of-stock',
+    minStockLevel: 2,
+    internalId: generateInternalId(),
+    createdAt: '2024-01-03T00:00:00Z',
+    updatedAt: '2024-01-25T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Monitor 27" 4K Dell',
+    quantity: 6,
+    purchasePrice: 320,
+    purchaseDate: '2024-01-18',
+    purchasedFrom: 'Dell Direct',
+    serialNumber: generateSerialNumber('DL-MON27'),
+    categoryId: mockCategories[0].id,
+    locationId: mockLocations[1].id,
+    status: 'in-stock',
+    minStockLevel: 2,
+    internalId: generateInternalId(),
+    createdAt: '2024-01-18T00:00:00Z',
+    updatedAt: '2024-01-18T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Filing Cabinet 4-Drawer',
+    quantity: 2,
+    purchasePrice: 125,
+    purchaseDate: '2024-01-14',
+    purchasedFrom: 'Office Depot',
+    categoryId: mockCategories[1].id,
+    locationId: mockLocations[0].id,
+    status: 'low-stock',
+    minStockLevel: 4,
+    internalId: generateInternalId(),
+    createdAt: '2024-01-14T00:00:00Z',
+    updatedAt: '2024-01-14T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Whiteboard Markers Set',
+    quantity: 12,
+    purchasePrice: 15,
+    purchaseDate: '2024-01-07',
+    purchasedFrom: 'Amazon',
+    categoryId: mockCategories[2].id,
+    locationId: mockLocations[2].id,
+    status: 'in-stock',
+    minStockLevel: 5,
+    internalId: generateInternalId(),
+    createdAt: '2024-01-07T00:00:00Z',
+    updatedAt: '2024-01-07T00:00:00Z'
   }
 ]
 

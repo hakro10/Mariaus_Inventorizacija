@@ -107,13 +107,21 @@ export function InventoryGrid({ items, categories, locations, onEditItem, onSell
               </div>
             </div>
 
-            {item.serialNumber && (
+            <div className="space-y-1">
               <div className="flex items-center space-x-1 text-xs">
                 <Hash className="h-3 w-3 text-muted-foreground" />
-                <span className="text-muted-foreground">Serial:</span>
-                <span className="font-mono font-medium">{item.serialNumber}</span>
+                <span className="text-muted-foreground">ID:</span>
+                <span className="font-mono font-medium text-blue-600 dark:text-blue-400">{item.internalId}</span>
               </div>
-            )}
+              
+              {item.serialNumber && (
+                <div className="flex items-center space-x-1 text-xs">
+                  <Hash className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-muted-foreground">Serial:</span>
+                  <span className="font-mono font-medium">{item.serialNumber}</span>
+                </div>
+              )}
+            </div>
 
             <div className="flex space-x-2 pt-2">
               <Button 

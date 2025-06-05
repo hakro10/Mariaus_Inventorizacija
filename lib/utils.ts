@@ -25,8 +25,15 @@ export function generateId(): string {
   return Math.random().toString(36).substr(2, 9)
 }
 
+let internalIdCounter = 1001
+
 export function generateInternalId(): string {
-  const timestamp = Date.now().toString(36)
-  const randomStr = Math.random().toString(36).substr(2, 5)
-  return `WH-${timestamp}-${randomStr}`.toUpperCase()
+  const year = new Date().getFullYear()
+  const counter = internalIdCounter++
+  return `WH-${year}-${counter.toString().padStart(4, '0')}`
+}
+
+export function generateSerialNumber(prefix: string): string {
+  const randomNum = Math.floor(Math.random() * 9000) + 1000
+  return `${prefix}-${randomNum}`
 } 
