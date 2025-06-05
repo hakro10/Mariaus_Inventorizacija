@@ -45,6 +45,10 @@ export interface Sale {
   soldDate: string
   profit: number
   createdAt: string
+  // Seller credentials
+  sellerName: string
+  sellerEmail: string
+  customerPhone?: string
 }
 
 export interface Task {

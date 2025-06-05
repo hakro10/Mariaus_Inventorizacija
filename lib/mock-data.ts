@@ -270,7 +270,10 @@ export const mockSales: Sale[] = [
     soldTo: 'Tech Startup Inc.',
     soldDate: '2024-01-20',
     profit: 200,
-    createdAt: '2024-01-20T00:00:00Z'
+    createdAt: '2024-01-20T00:00:00Z',
+    sellerName: 'Sarah Johnson',
+    sellerEmail: 'sarah.johnson@company.com',
+    customerPhone: '+1 (555) 123-4567'
   }
 ]
 

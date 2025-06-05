@@ -6,6 +6,9 @@ import { Button } from "../../components/ui/button"
 import { Header } from "../../components/header"
 import { DashboardStatsComponent } from "../../components/dashboard-stats"
 import { InventoryGrid } from "../../components/inventory-grid"
+import { AddCategoryModal } from "../../components/add-category-modal"
+import { EditItemModal } from "../../components/edit-item-modal"
+import { SellItemModal } from "../../components/sell-item-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Badge } from "../../components/ui/badge"
 import { 
@@ -17,16 +20,31 @@ import {
   mockTeamMembers, 
   mockDashboardStats 
 } from "../../lib/mock-data"
-import { InventoryItem, Category, Location, Sale, Task, TeamMember } from "../../lib/types"
+import { InventoryItem, Category, Location, Sale, Task, TeamMember, DashboardStats } from "../../lib/types"
 import { formatCurrency, formatDate } from "../../lib/utils"
-import { Package, Users, ClipboardList, MapPin, Tag, ShoppingCart, Calendar, Clock, AlertCircle } from "lucide-react"
+import { Package, Users, ClipboardList, MapPin, Tag, ShoppingCart, Calendar, Clock, AlertCircle, Plus } from "lucide-react"
 
 export default function WarehouseManagementPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  
+  // State for items, categories, sales
+  const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>(mockInventoryItems)
+  const [categories, setCategories] = useState<Category[]>(mockCategories)
+  const [sales, setSales] = useState<Sale[]>(mockSales)
+  const [dashboardStats, setDashboardStats] = useState<DashboardStats>(mockDashboardStats)
+  
+  // Modal states
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false)
+  const [editItemOpen, setEditItemOpen] = useState(false)
+  const [sellItemOpen, setSellItemOpen] = useState(false)
+  const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
+  
+  // Current user (simulate logged-in user)
+  const currentUser = mockTeamMembers[1] // Sarah Johnson as default user
 
   // Filter items based on search query and selected category
-  const filteredItems = mockInventoryItems.filter(item => {
+  const filteredItems = inventoryItems.filter(item => {
     const matchesSearch = searchQuery === "" || 
       item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.serialNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -43,13 +61,66 @@ export default function WarehouseManagementPage() {
   }
 
   const handleEditItem = (item: InventoryItem) => {
-    // TODO: Implement edit item functionality
-    console.log("Edit item:", item)
+    setSelectedItem(item)
+    setEditItemOpen(true)
   }
 
   const handleSellItem = (item: InventoryItem) => {
-    // TODO: Implement sell item functionality
-    console.log("Sell item:", item)
+    setSelectedItem(item)
+    setSellItemOpen(true)
+  }
+
+  const handleAddCategory = (newCategory: Category) => {
+    setCategories(prev => [...prev, newCategory])
+  }
+
+  const handleUpdateItem = (updatedItem: InventoryItem) => {
+    setInventoryItems(prev => 
+      prev.map(item => item.id === updatedItem.id ? updatedItem : item)
+    )
+    
+    // Recalculate dashboard stats
+    updateDashboardStats()
+  }
+
+  const handleCompleteSale = (sale: Sale, quantitySold: number) => {
+    // Add sale
+    setSales(prev => [...prev, sale])
+    
+    // Update inventory quantity
+    setInventoryItems(prev => 
+      prev.map(item => 
+        item.id === sale.inventoryItemId 
+          ? { 
+              ...item, 
+              quantity: item.quantity - quantitySold,
+              status: item.quantity - quantitySold === 0 ? 'out-of-stock' : 
+                     item.quantity - quantitySold <= (item.minStockLevel || 1) ? 'low-stock' : 'in-stock',
+              updatedAt: new Date().toISOString()
+            }
+          : item
+      )
+    )
+    
+    // Recalculate dashboard stats
+    updateDashboardStats()
+  }
+
+  const updateDashboardStats = () => {
+    const totalItems = inventoryItems.reduce((sum, item) => sum + item.quantity, 0)
+    const totalValue = inventoryItems.reduce((sum, item) => sum + (item.quantity * item.purchasePrice), 0)
+    const lowStockAlerts = inventoryItems.filter(item => item.status === 'low-stock' || item.status === 'out-of-stock').length
+    const totalSalesValue = sales.reduce((sum, sale) => sum + sale.soldPrice, 0)
+    const monthlyProfit = sales.reduce((sum, sale) => sum + sale.profit, 0)
+    
+    setDashboardStats({
+      totalItems,
+      totalValue,
+      lowStockAlerts,
+      totalSales: totalSalesValue,
+      monthlyProfit,
+      weeklySales: sales.length
+    })
   }
 
   const getTaskPriorityVariant = (priority: string) => {
@@ -98,7 +169,7 @@ export default function WarehouseManagementPage() {
               </div>
             </div>
             
-            <DashboardStatsComponent stats={mockDashboardStats} />
+            <DashboardStatsComponent stats={dashboardStats} />
 
             <div className="grid gap-6 md:grid-cols-2">
               {/* Recent Sales */}
@@ -112,8 +183,8 @@ export default function WarehouseManagementPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {mockSales.slice(0, 5).map((sale) => {
-                      const item = mockInventoryItems.find(i => i.id === sale.inventoryItemId)
+                    {sales.slice(0, 5).map((sale) => {
+                      const item = inventoryItems.find(i => i.id === sale.inventoryItemId)
                       return (
                         <div key={sale.id} className="flex items-center justify-between">
                           <div>
@@ -144,7 +215,17 @@ export default function WarehouseManagementPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {mockCategories.map((category) => (
+                    <div className="flex justify-end">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setAddCategoryOpen(true)}
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Category
+                      </Button>
+                    </div>
+                    {categories.map((category) => (
                       <div key={category.id} className="flex items-center justify-between">
                         <div className="flex items-center space-x-3">
                           <div 
@@ -171,7 +252,7 @@ export default function WarehouseManagementPage() {
               <h2 className="text-3xl font-bold tracking-tight">Inventory</h2>
               <div className="flex items-center space-x-2">
                 <div className="text-sm text-muted-foreground">
-                  {filteredItems.length} of {mockInventoryItems.length} items
+                  {filteredItems.length} of {inventoryItems.length} items
                 </div>
               </div>
             </div>
@@ -185,7 +266,7 @@ export default function WarehouseManagementPage() {
               >
                 All Categories
               </Button>
-              {mockCategories.map((category) => (
+              {categories.map((category) => (
                 <Button
                   key={category.id}
                   variant={selectedCategory === category.id ? "default" : "outline"}
@@ -203,7 +284,7 @@ export default function WarehouseManagementPage() {
 
             <InventoryGrid 
               items={filteredItems}
-              categories={mockCategories}
+              categories={categories}
               locations={mockLocations}
               onEditItem={handleEditItem}
               onSellItem={handleSellItem}
@@ -218,8 +299,8 @@ export default function WarehouseManagementPage() {
             </div>
 
             <div className="space-y-4">
-              {mockSales.map((sale) => {
-                const item = mockInventoryItems.find(i => i.id === sale.inventoryItemId)
+              {sales.map((sale) => {
+                const item = inventoryItems.find(i => i.id === sale.inventoryItemId)
                 return (
                   <Card key={sale.id}>
                     <CardContent className="pt-6">
@@ -230,8 +311,13 @@ export default function WarehouseManagementPage() {
                             Sold to: {sale.soldTo} • {formatDate(sale.soldDate)}
                           </p>
                           <p className="text-sm text-muted-foreground">
-                            Quantity: {sale.quantitySold} units
+                            Quantity: {sale.quantitySold} units • Seller: {sale.sellerName}
                           </p>
+                          {sale.customerPhone && (
+                            <p className="text-xs text-muted-foreground">
+                              Customer Phone: {sale.customerPhone}
+                            </p>
+                          )}
                         </div>
                         <div className="text-right">
                           <p className="text-lg font-semibold">{formatCurrency(sale.soldPrice)}</p>
@@ -373,6 +459,30 @@ export default function WarehouseManagementPage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* Modals */}
+      <AddCategoryModal
+        open={addCategoryOpen}
+        onOpenChange={setAddCategoryOpen}
+        onAddCategory={handleAddCategory}
+      />
+
+      <EditItemModal
+        open={editItemOpen}
+        onOpenChange={setEditItemOpen}
+        item={selectedItem}
+        categories={categories}
+        locations={mockLocations}
+        onUpdateItem={handleUpdateItem}
+      />
+
+      <SellItemModal
+        open={sellItemOpen}
+        onOpenChange={setSellItemOpen}
+        item={selectedItem}
+        currentUser={currentUser}
+        onSellItem={handleCompleteSale}
+      />
     </div>
   )
 } 
