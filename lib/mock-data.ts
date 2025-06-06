@@ -49,8 +49,9 @@ export const mockLocations: Location[] = [
     level: 1,
     capacity: 1000,
     currentUsage: 750,
-    qrCode: 'WH-A-001',
-    createdAt: '2024-01-01T00:00:00Z'
+    qrCode: 'LOC-WAR-L1-001',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
   },
   {
     id: zone1Id,
@@ -60,8 +61,9 @@ export const mockLocations: Location[] = [
     parentId: warehouseAId,
     capacity: 300,
     currentUsage: 245,
-    qrCode: 'WH-A-Z1-001',
-    createdAt: '2024-01-01T00:00:00Z'
+    qrCode: 'LOC-ZON-L2-001',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
   },
   {
     id: generateId(),
@@ -71,8 +73,9 @@ export const mockLocations: Location[] = [
     parentId: zone1Id,
     capacity: 100,
     currentUsage: 85,
-    qrCode: 'WH-A-Z1-A1-001',
-    createdAt: '2024-01-01T00:00:00Z'
+    qrCode: 'LOC-AIS-L3-001',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-01T00:00:00Z'
   }
 ]
 

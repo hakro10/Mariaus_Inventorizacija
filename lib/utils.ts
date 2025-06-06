@@ -13,27 +13,55 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatDate(date: string | Date): string {
-  const d = new Date(date)
-  return d.toLocaleDateString('en-US', {
+  return new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  })
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date))
 }
 
 export function generateId(): string {
-  return Math.random().toString(36).substr(2, 9)
+  return crypto.randomUUID()
 }
 
 let internalIdCounter = 1001
 
 export function generateInternalId(): string {
-  const year = new Date().getFullYear()
-  const counter = internalIdCounter++
-  return `WH-${year}-${counter.toString().padStart(4, '0')}`
+  const timestamp = Date.now().toString().slice(-6)
+  const random = Math.random().toString(36).substring(2, 5).toUpperCase()
+  return `INV-${timestamp}-${random}`
 }
 
 export function generateSerialNumber(prefix: string): string {
-  const randomNum = Math.floor(Math.random() * 9000) + 1000
-  return `${prefix}-${randomNum}`
+  const timestamp = Date.now().toString().slice(-8)
+  const random = Math.random().toString(36).substring(2, 6).toUpperCase()
+  return `${prefix}-${timestamp}-${random}`
+}
+
+// Utility to decode location QR codes
+export function decodeLocationQR(qrData: string): {
+  locationId: string
+  locationCode: string
+  name: string
+  level: number
+  type: string
+} | null {
+  try {
+    const parsed = JSON.parse(qrData)
+    if (parsed.type === 'location') {
+      return {
+        locationId: parsed.locationId,
+        locationCode: parsed.locationCode,
+        name: parsed.name,
+        level: parsed.level,
+        type: parsed.type
+      }
+    }
+    return null
+  } catch (error) {
+    console.error('Error decoding QR code:', error)
+    return null
+  }
 } 

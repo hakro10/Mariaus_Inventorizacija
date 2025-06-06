@@ -192,7 +192,7 @@ function TaskCard({ task, teamMembers, onTaskClick, onDeleteTask }: TaskCardProp
           </div>
         )}
         
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mt-2">
           <div className="flex items-center space-x-2 flex-1 min-w-0">
             <Badge variant={getPriorityColor(task.priority)} className="text-xs flex-shrink-0">
               {task.priority.toUpperCase()}
@@ -206,13 +206,13 @@ function TaskCard({ task, teamMembers, onTaskClick, onDeleteTask }: TaskCardProp
             )}
           </div>
           
-          <div className="flex items-center space-x-2 flex-shrink-0">
+          <div className="flex items-center space-x-2 flex-shrink-0 ml-2">
             <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-              <Calendar className="h-3 w-3" />
-              <span className="hidden sm:inline">{formatDate(task.dueDate).split(',')[0]}</span>
+              <Calendar className="h-3 w-3 flex-shrink-0" />
+              <span className="hidden sm:inline whitespace-nowrap">{formatDate(task.dueDate).split(',')[0]}</span>
             </div>
             {assignee && (
-              <div className="flex items-center space-x-1">
+              <div className="flex items-center space-x-1 ml-1">
                 <div className="relative flex-shrink-0">
                   <img
                     src={assignee.avatar}
@@ -234,7 +234,7 @@ function TaskCard({ task, teamMembers, onTaskClick, onDeleteTask }: TaskCardProp
                   </div>
                   <div className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-white ${getStatusColor(assignee.status)}`} />
                 </div>
-                <span className="text-xs text-muted-foreground hidden md:inline max-w-[80px] truncate">
+                <span className="text-xs text-muted-foreground hidden lg:inline max-w-[60px] truncate">
                   {assignee.name.split(' ')[0]}
                 </span>
               </div>
@@ -261,6 +261,51 @@ function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask }: Colum
   })
 
   const isHistoryColumn = column.id === 'history'
+  
+  // Sort history tasks by date (most recent first) and group by date
+  const processedTasks = isHistoryColumn 
+    ? tasks.sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())
+    : tasks
+  
+  const renderHistoryTasks = () => {
+    if (!isHistoryColumn) return null
+    
+    const groupedTasks: { [key: string]: typeof tasks } = {}
+    
+    processedTasks.forEach(task => {
+      const date = new Date(task.updatedAt || task.createdAt).toDateString()
+      if (!groupedTasks[date]) {
+        groupedTasks[date] = []
+      }
+      groupedTasks[date].push(task)
+    })
+    
+    return Object.entries(groupedTasks).map(([dateString, dateTasks]) => (
+      <div key={dateString}>
+        <div className="sticky top-0 bg-slate-100 dark:bg-slate-800/40 -mx-3 px-3 py-2 mb-3 border-b border-slate-300 dark:border-slate-600">
+          <p className="text-xs font-medium text-slate-600 dark:text-slate-400">
+            {new Date(dateString).toLocaleDateString('en-US', { 
+              weekday: 'short', 
+              month: 'short', 
+              day: 'numeric',
+              year: 'numeric'
+            })}
+          </p>
+        </div>
+        <div className="space-y-3 mb-6">
+          {dateTasks.map(task => (
+            <TaskCard 
+              key={task.id} 
+              task={task} 
+              teamMembers={teamMembers} 
+              onTaskClick={onTaskClick}
+              onDeleteTask={undefined}
+            />
+          ))}
+        </div>
+      </div>
+    ))
+  }
 
   return (
     <div className="flex flex-col h-full max-h-[calc(100vh-280px)]">
@@ -289,33 +334,40 @@ function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask }: Colum
         }}
       >
         <SortableContext items={tasks.map(task => task.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-3">
-            {tasks.map(task => (
-              <TaskCard 
-                key={task.id} 
-                task={task} 
-                teamMembers={teamMembers} 
-                onTaskClick={onTaskClick}
-                onDeleteTask={!isHistoryColumn ? onDeleteTask : undefined}
-              />
-            ))}
-            {isHistoryColumn && tasks.length === 0 && (
-              <div className="text-center text-sm text-muted-foreground py-8">
-                <Archive className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>No completed tasks yet</p>
-                <p className="text-xs mt-1">Tasks moved to Done will automatically appear here</p>
-              </div>
-            )}
-            {!isHistoryColumn && tasks.length === 0 && (
-              <div className="text-center text-sm text-muted-foreground py-8">
-                <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center opacity-50">
-                  <div className="w-3 h-3 rounded-full bg-slate-400 dark:bg-slate-500" />
+          {isHistoryColumn ? (
+            <div>
+              {tasks.length === 0 ? (
+                <div className="text-center text-sm text-muted-foreground py-8">
+                  <Archive className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>No completed tasks yet</p>
+                  <p className="text-xs mt-1">Tasks moved to Done will automatically appear here</p>
                 </div>
-                <p>No tasks</p>
-                <p className="text-xs mt-1">Drag tasks here or create new ones</p>
-              </div>
-            )}
-          </div>
+              ) : (
+                renderHistoryTasks()
+              )}
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {tasks.map(task => (
+                <TaskCard 
+                  key={task.id} 
+                  task={task} 
+                  teamMembers={teamMembers} 
+                  onTaskClick={onTaskClick}
+                  onDeleteTask={onDeleteTask}
+                />
+              ))}
+              {tasks.length === 0 && (
+                <div className="text-center text-sm text-muted-foreground py-8">
+                  <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center opacity-50">
+                    <div className="w-3 h-3 rounded-full bg-slate-400 dark:bg-slate-500" />
+                  </div>
+                  <p>No tasks</p>
+                  <p className="text-xs mt-1">Drag tasks here or create new ones</p>
+                </div>
+              )}
+            </div>
+          )}
         </SortableContext>
       </div>
     </div>
@@ -638,7 +690,7 @@ function TaskDetailModal({ task, teamMembers, open, onOpenChange, onUpdateTask }
                   const author = teamMembers.find(member => member.id === comment.authorId)
                   return (
                     <div key={comment.id} className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg border border-slate-200 dark:border-slate-700">
-                      <div className="flex items-start space-x-3 mb-3">
+                      <div className="flex items-start space-x-3">
                         {author && (
                           <>
                             <img
@@ -647,17 +699,17 @@ function TaskDetailModal({ task, teamMembers, open, onOpenChange, onUpdateTask }
                               className="w-8 h-8 rounded-full object-cover flex-shrink-0"
                             />
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2 mb-1">
+                              <div className="flex items-center space-x-2 mb-2">
                                 <span className="font-medium text-sm">{author.name}</span>
                                 <span className="text-xs text-muted-foreground">
                                   {formatDate(comment.createdAt)}
                                 </span>
                               </div>
+                              <p className="text-sm leading-relaxed">{comment.content}</p>
                             </div>
                           </>
                         )}
                       </div>
-                      <p className="text-sm leading-relaxed ml-11">{comment.content}</p>
                     </div>
                   )
                 })}

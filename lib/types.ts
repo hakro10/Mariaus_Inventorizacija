@@ -32,9 +32,12 @@ export interface Location {
   level: number
   parentId?: string
   qrCode?: string
+  qrCodeImage?: string
   capacity?: number
   currentUsage?: number
+  items?: InventoryItem[]
   createdAt: string
+  updatedAt?: string
 }
 
 export interface Sale {
