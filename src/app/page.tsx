@@ -15,6 +15,7 @@ import { TaskBoard } from "../../components/task-board"
 import { AddLocationModal } from "../../components/add-location-modal"
 import { LocationDetailModal } from "../../components/location-detail-modal"
 import { EditCategoryModal } from "../../components/edit-category-modal"
+import { ItemDetailModal } from "../../components/item-detail-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Badge } from "../../components/ui/badge"
 import { 
@@ -49,6 +50,7 @@ export default function WarehouseManagementPage() {
   const [editItemOpen, setEditItemOpen] = useState(false)
   const [sellItemOpen, setSellItemOpen] = useState(false)
   const [locationDetailOpen, setLocationDetailOpen] = useState(false)
+  const [itemDetailOpen, setItemDetailOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [selectedCategoryForEdit, setSelectedCategoryForEdit] = useState<Category | null>(null)
@@ -95,6 +97,11 @@ export default function WarehouseManagementPage() {
   const handleSellItem = (item: InventoryItem) => {
     setSelectedItem(item)
     setSellItemOpen(true)
+  }
+
+  const handleItemClick = (item: InventoryItem) => {
+    setSelectedItem(item)
+    setItemDetailOpen(true)
   }
 
   const handleAddCategory = (newCategory: Category) => {
@@ -452,6 +459,7 @@ export default function WarehouseManagementPage() {
                 onEditItem={handleEditItem}
                 onSellItem={handleSellItem}
                 onDeleteItem={handleDeleteItem}
+                onItemClick={handleItemClick}
               />
             </div>
           </TabsContent>
@@ -740,6 +748,17 @@ export default function WarehouseManagementPage() {
         onOpenChange={setEditCategoryOpen}
         category={selectedCategoryForEdit}
         onUpdateCategory={handleUpdateCategory}
+      />
+
+      <ItemDetailModal
+        open={itemDetailOpen}
+        onOpenChange={setItemDetailOpen}
+        item={selectedItem}
+        categories={categories}
+        locations={locations}
+        onEditItem={handleEditItem}
+        onSellItem={handleSellItem}
+        onDeleteItem={handleDeleteItem}
       />
     </div>
   )
