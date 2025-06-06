@@ -56,10 +56,24 @@ export interface Task {
   id: string
   title: string
   description: string
-  status: 'todo' | 'in-progress' | 'done'
+  status: 'todo' | 'in-progress' | 'done' | 'history'
   priority: 'low' | 'medium' | 'high'
   assigneeId: string
   dueDate: string
+  createdAt: string
+  updatedAt?: string
+  estimatedHours?: number
+  actualHours?: number
+  tags?: string[]
+  comments?: TaskComment[]
+  attachments?: string[]
+}
+
+export interface TaskComment {
+  id: string
+  taskId: string
+  authorId: string
+  content: string
   createdAt: string
 }
 
@@ -68,7 +82,10 @@ export interface TeamMember {
   name: string
   email: string
   role: 'admin' | 'manager' | 'user'
-  avatar?: string
+  avatar: string
+  department?: string
+  phone?: string
+  status: 'active' | 'away' | 'busy' | 'offline'
   createdAt: string
 }
 

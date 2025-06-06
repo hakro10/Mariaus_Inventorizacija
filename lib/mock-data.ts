@@ -83,6 +83,10 @@ export const mockTeamMembers: TeamMember[] = [
     name: 'John Smith',
     email: 'john.smith@company.com',
     role: 'admin',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face&auto=format',
+    department: 'Management',
+    phone: '+1 (555) 123-0001',
+    status: 'active',
     createdAt: '2024-01-01T00:00:00Z'
   },
   {
@@ -90,6 +94,10 @@ export const mockTeamMembers: TeamMember[] = [
     name: 'Sarah Johnson',
     email: 'sarah.johnson@company.com',
     role: 'manager',
+    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=150&h=150&fit=crop&crop=face&auto=format',
+    department: 'Operations',
+    phone: '+1 (555) 123-0002',
+    status: 'active',
     createdAt: '2024-01-01T00:00:00Z'
   },
   {
@@ -97,6 +105,54 @@ export const mockTeamMembers: TeamMember[] = [
     name: 'Mike Davis',
     email: 'mike.davis@company.com',
     role: 'user',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face&auto=format',
+    department: 'Warehouse',
+    phone: '+1 (555) 123-0003',
+    status: 'active',
+    createdAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Emily Chen',
+    email: 'emily.chen@company.com',
+    role: 'user',
+    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face&auto=format',
+    department: 'Quality Control',
+    phone: '+1 (555) 123-0004',
+    status: 'active',
+    createdAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Alex Rodriguez',
+    email: 'alex.rodriguez@company.com',
+    role: 'user',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face&auto=format',
+    department: 'IT',
+    phone: '+1 (555) 123-0005',
+    status: 'away',
+    createdAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'Lisa Wang',
+    email: 'lisa.wang@company.com',
+    role: 'manager',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face&auto=format',
+    department: 'Logistics',
+    phone: '+1 (555) 123-0006',
+    status: 'busy',
+    createdAt: '2024-01-01T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    name: 'James Wilson',
+    email: 'james.wilson@company.com',
+    role: 'user',
+    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f82?w=150&h=150&fit=crop&crop=face&auto=format',
+    department: 'Security',
+    phone: '+1 (555) 123-0007',
+    status: 'active',
     createdAt: '2024-01-01T00:00:00Z'
   }
 ]
@@ -287,7 +343,20 @@ export const mockTasks: Task[] = [
     priority: 'high',
     assigneeId: mockTeamMembers[1].id,
     dueDate: '2024-02-01',
-    createdAt: '2024-01-25T00:00:00Z'
+    createdAt: '2024-01-25T00:00:00Z',
+    updatedAt: '2024-01-27T10:30:00Z',
+    estimatedHours: 8,
+    actualHours: 5,
+    tags: ['audit', 'electronics', 'urgent'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[1].id,
+        content: 'Started the audit this morning. Zone 1A completed, moving to 1B.',
+        createdAt: '2024-01-27T10:30:00Z'
+      }
+    ]
   },
   {
     id: generateId(),
@@ -297,7 +366,10 @@ export const mockTasks: Task[] = [
     priority: 'medium',
     assigneeId: mockTeamMembers[2].id,
     dueDate: '2024-01-30',
-    createdAt: '2024-01-26T00:00:00Z'
+    createdAt: '2024-01-26T00:00:00Z',
+    estimatedHours: 3,
+    tags: ['procurement', 'furniture'],
+    comments: []
   },
   {
     id: generateId(),
@@ -307,7 +379,20 @@ export const mockTasks: Task[] = [
     priority: 'low',
     assigneeId: mockTeamMembers[0].id,
     dueDate: '2024-01-25',
-    createdAt: '2024-01-20T00:00:00Z'
+    createdAt: '2024-01-20T00:00:00Z',
+    updatedAt: '2024-01-25T16:45:00Z',
+    estimatedHours: 4,
+    actualHours: 3.5,
+    tags: ['labeling', 'maintenance'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[0].id,
+        content: 'All QR codes updated and tested. Task completed successfully.',
+        createdAt: '2024-01-25T16:45:00Z'
+      }
+    ]
   },
   {
     id: generateId(),
@@ -315,9 +400,12 @@ export const mockTasks: Task[] = [
     description: 'Perform monthly system backup and database maintenance tasks',
     status: 'todo',
     priority: 'high',
-    assigneeId: mockTeamMembers[0].id,
+    assigneeId: mockTeamMembers[4].id,
     dueDate: '2024-02-05',
-    createdAt: '2024-01-27T00:00:00Z'
+    createdAt: '2024-01-27T00:00:00Z',
+    estimatedHours: 6,
+    tags: ['maintenance', 'system', 'backup'],
+    comments: []
   },
   {
     id: generateId(),
@@ -325,9 +413,21 @@ export const mockTasks: Task[] = [
     description: 'Conduct orientation training for new warehouse staff member',
     status: 'in-progress',
     priority: 'medium',
-    assigneeId: mockTeamMembers[1].id,
+    assigneeId: mockTeamMembers[5].id,
     dueDate: '2024-02-03',
-    createdAt: '2024-01-28T00:00:00Z'
+    createdAt: '2024-01-28T00:00:00Z',
+    estimatedHours: 12,
+    actualHours: 4,
+    tags: ['training', 'onboarding'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[5].id,
+        content: 'Day 1 training completed. Employee shows good understanding of safety protocols.',
+        createdAt: '2024-01-29T17:00:00Z'
+      }
+    ]
   },
   {
     id: generateId(),
@@ -337,7 +437,124 @@ export const mockTasks: Task[] = [
     priority: 'medium',
     assigneeId: mockTeamMembers[0].id,
     dueDate: '2024-01-20',
-    createdAt: '2024-01-15T00:00:00Z'
+    createdAt: '2024-01-15T00:00:00Z',
+    updatedAt: '2024-01-20T14:20:00Z',
+    estimatedHours: 16,
+    actualHours: 18,
+    tags: ['contracts', 'procurement', 'annual'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[0].id,
+        content: 'Contract review completed. Negotiated 5% cost reduction with main supplier.',
+        createdAt: '2024-01-20T14:20:00Z'
+      }
+    ]
+  },
+  {
+    id: generateId(),
+    title: 'Security System Upgrade',
+    description: 'Install new security cameras and update access control system',
+    status: 'in-progress',
+    priority: 'high',
+    assigneeId: mockTeamMembers[6].id,
+    dueDate: '2024-02-10',
+    createdAt: '2024-01-29T00:00:00Z',
+    estimatedHours: 20,
+    actualHours: 8,
+    tags: ['security', 'hardware', 'upgrade'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[6].id,
+        content: 'Cameras installed in zones 1-3. Working on access control integration.',
+        createdAt: '2024-01-30T11:15:00Z'
+      }
+    ]
+  },
+  {
+    id: generateId(),
+    title: 'Quality Control Testing',
+    description: 'Perform quality checks on incoming electronics shipment',
+    status: 'todo',
+    priority: 'medium',
+    assigneeId: mockTeamMembers[3].id,
+    dueDate: '2024-02-02',
+    createdAt: '2024-01-28T00:00:00Z',
+    estimatedHours: 5,
+    tags: ['quality', 'testing', 'electronics'],
+    comments: []
+  },
+  {
+    id: generateId(),
+    title: 'Equipment Maintenance',
+    description: 'Monthly maintenance of warehouse equipment and machinery',
+    status: 'history',
+    priority: 'medium',
+    assigneeId: mockTeamMembers[2].id,
+    dueDate: '2024-01-15',
+    createdAt: '2024-01-01T00:00:00Z',
+    updatedAt: '2024-01-15T16:30:00Z',
+    estimatedHours: 6,
+    actualHours: 5.5,
+    tags: ['maintenance', 'equipment'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[2].id,
+        content: 'All equipment checked and serviced. Replaced worn belts on conveyor system.',
+        createdAt: '2024-01-15T16:30:00Z'
+      }
+    ]
+  },
+  {
+    id: generateId(),
+    title: 'Staff Safety Training',
+    description: 'Quarterly safety training session for all warehouse staff',
+    status: 'history',
+    priority: 'high',
+    assigneeId: mockTeamMembers[1].id,
+    dueDate: '2024-01-10',
+    createdAt: '2023-12-20T00:00:00Z',
+    updatedAt: '2024-01-10T14:00:00Z',
+    estimatedHours: 8,
+    actualHours: 8,
+    tags: ['training', 'safety', 'compliance'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[1].id,
+        content: 'Training completed successfully. All 15 staff members attended and passed the safety assessment.',
+        createdAt: '2024-01-10T14:00:00Z'
+      }
+    ]
+  },
+  {
+    id: generateId(),
+    title: 'Inventory System Migration',
+    description: 'Migrate from old inventory system to new WIMS platform',
+    status: 'history',
+    priority: 'high',
+    assigneeId: mockTeamMembers[4].id,
+    dueDate: '2023-12-31',
+    createdAt: '2023-12-01T00:00:00Z',
+    updatedAt: '2023-12-30T18:45:00Z',
+    estimatedHours: 40,
+    actualHours: 42,
+    tags: ['migration', 'system', 'data'],
+    comments: [
+      {
+        id: generateId(),
+        taskId: '',
+        authorId: mockTeamMembers[4].id,
+        content: 'Migration completed ahead of schedule. All data successfully transferred with zero data loss.',
+        createdAt: '2023-12-30T18:45:00Z'
+      }
+    ]
   }
 ]
 

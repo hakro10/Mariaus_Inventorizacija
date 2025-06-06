@@ -27,32 +27,28 @@ import { formatCurrency, formatDate } from "../../lib/utils"
 import { Package, Users, ClipboardList, MapPin, Tag, ShoppingCart, Calendar, Clock, AlertCircle, Plus } from "lucide-react"
 
 export default function WarehouseManagementPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  
-  // State for items, categories, sales, tasks
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>(mockInventoryItems)
   const [categories, setCategories] = useState<Category[]>(mockCategories)
   const [sales, setSales] = useState<Sale[]>(mockSales)
   const [tasks, setTasks] = useState<Task[]>(mockTasks)
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>(mockDashboardStats)
   
-  // Modal states
-  const [addCategoryOpen, setAddCategoryOpen] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [addItemOpen, setAddItemOpen] = useState(false)
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false)
   const [editItemOpen, setEditItemOpen] = useState(false)
   const [sellItemOpen, setSellItemOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
-  
-  // Current user (simulate logged-in user)
+
+  // Team member for sales
   const currentUser = mockTeamMembers[1] // Sarah Johnson as default user
 
-  // Filter items based on search query and selected category
+  // Filter items based on search and category
   const filteredItems = inventoryItems.filter(item => {
-    const matchesSearch = searchQuery === "" || 
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.serialNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.internalId.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.internalId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         item.serialNumber?.toLowerCase().includes(searchQuery.toLowerCase())
     
     const matchesCategory = selectedCategory === null || item.categoryId === selectedCategory
     
@@ -157,19 +153,25 @@ export default function WarehouseManagementPage() {
     setTasks(prev => [...prev, newTask])
   }
 
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(prev => prev.filter(task => task.id !== taskId))
+  }
 
+  const handleCreateHistoryTask = (historyTask: Task) => {
+    setTasks(prev => [...prev, historyTask])
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-100 via-slate-50 to-blue-50 dark:from-slate-900 dark:via-blue-900 dark:to-purple-900">
+    <div className="h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 dark:from-slate-900 dark:via-blue-900 dark:to-slate-800 flex flex-col overflow-hidden">
       <Header 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onAddItem={handleAddItem}
       />
       
-      <main className="container mx-auto px-4 py-6">
-        <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+      <main className="container mx-auto px-4 py-6 flex-1 flex flex-col min-h-0 overflow-hidden">
+        <Tabs defaultValue="dashboard" className="space-y-6 flex-1 flex flex-col min-h-0">
+          <TabsList className="grid w-full grid-cols-6 flex-shrink-0">
             <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
             <TabsTrigger value="inventory">Inventory</TabsTrigger>
             <TabsTrigger value="sales">Sales</TabsTrigger>
@@ -350,12 +352,14 @@ export default function WarehouseManagementPage() {
           </TabsContent>
 
           {/* Tasks Tab */}
-          <TabsContent value="tasks">
+          <TabsContent value="tasks" className="flex-1 flex flex-col min-h-0">
             <TaskBoard 
               tasks={tasks}
               teamMembers={mockTeamMembers}
               onUpdateTask={handleUpdateTask}
               onCreateTask={handleCreateTask}
+              onDeleteTask={handleDeleteTask}
+              onCreateHistoryTask={handleCreateHistoryTask}
             />
           </TabsContent>
 
