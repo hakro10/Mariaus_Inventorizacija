@@ -21,7 +21,7 @@ interface HeaderProps {
 
 export function Header({ searchQuery, onSearchChange, onAddItem }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-gradient-to-r from-white/95 to-blue-50/95 dark:from-slate-800/95 dark:to-blue-800/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container flex h-16 items-center space-x-4">
         {/* Logo and Brand */}
         <div className="flex items-center space-x-2">
@@ -47,7 +47,11 @@ export function Header({ searchQuery, onSearchChange, onAddItem }: HeaderProps) 
 
         {/* Actions */}
         <div className="flex items-center space-x-2">
-          <Button onClick={onAddItem} size="sm">
+          <Button 
+            onClick={onAddItem} 
+            size="sm"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+          >
             <Plus className="mr-2 h-4 w-4" />
             Add Item
           </Button>

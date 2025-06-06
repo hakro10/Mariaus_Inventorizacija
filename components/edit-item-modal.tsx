@@ -91,9 +91,11 @@ export function EditItemModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+      <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border-0">
         <DialogHeader>
-          <DialogTitle>Edit Item</DialogTitle>
+          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Edit Item
+          </DialogTitle>
           <DialogDescription>
             Update the details for {item.name}
           </DialogDescription>
@@ -237,7 +239,11 @@ export function EditItemModal({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!formData.name.trim()}>
+            <Button 
+              type="submit" 
+              disabled={!formData.name.trim()}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
               Update Item
             </Button>
           </div>

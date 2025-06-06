@@ -61,7 +61,7 @@ export function InventoryGrid({ items, categories, locations, onEditItem, onSell
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => (
-        <Card key={item.id} className="transition-shadow hover:shadow-md">
+        <Card key={item.id} className="transition-all hover:shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-sm">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="space-y-1">

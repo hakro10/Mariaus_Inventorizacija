@@ -57,9 +57,11 @@ export function AddCategoryModal({ open, onOpenChange, onAddCategory }: AddCateg
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border-0">
         <DialogHeader>
-          <DialogTitle>Add New Category</DialogTitle>
+          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Add New Category
+          </DialogTitle>
           <DialogDescription>
             Create a new category to organize your inventory items.
           </DialogDescription>
@@ -110,7 +112,11 @@ export function AddCategoryModal({ open, onOpenChange, onAddCategory }: AddCateg
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit" disabled={!name.trim()}>
+            <Button 
+              type="submit" 
+              disabled={!name.trim()}
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+            >
               Add Category
             </Button>
           </div>

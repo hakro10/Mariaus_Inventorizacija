@@ -7,8 +7,10 @@ import { Header } from "../../components/header"
 import { DashboardStatsComponent } from "../../components/dashboard-stats"
 import { InventoryGrid } from "../../components/inventory-grid"
 import { AddCategoryModal } from "../../components/add-category-modal"
+import { AddItemModal } from "../../components/add-item-modal"
 import { EditItemModal } from "../../components/edit-item-modal"
 import { SellItemModal } from "../../components/sell-item-modal"
+import { TaskBoard } from "../../components/task-board"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Badge } from "../../components/ui/badge"
 import { 
@@ -28,14 +30,16 @@ export default function WarehouseManagementPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   
-  // State for items, categories, sales
+  // State for items, categories, sales, tasks
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>(mockInventoryItems)
   const [categories, setCategories] = useState<Category[]>(mockCategories)
   const [sales, setSales] = useState<Sale[]>(mockSales)
+  const [tasks, setTasks] = useState<Task[]>(mockTasks)
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>(mockDashboardStats)
   
   // Modal states
   const [addCategoryOpen, setAddCategoryOpen] = useState(false)
+  const [addItemOpen, setAddItemOpen] = useState(false)
   const [editItemOpen, setEditItemOpen] = useState(false)
   const [sellItemOpen, setSellItemOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
@@ -56,8 +60,23 @@ export default function WarehouseManagementPage() {
   })
 
   const handleAddItem = () => {
-    // TODO: Implement add item functionality
-    console.log("Add item clicked")
+    setAddItemOpen(true)
+  }
+
+  const handleCreateItem = (newItem: InventoryItem) => {
+    setInventoryItems(prev => [...prev, newItem])
+    
+    // Update category item count
+    setCategories(prev => 
+      prev.map(category => 
+        category.id === newItem.categoryId 
+          ? { ...category, itemCount: category.itemCount + 1 }
+          : category
+      )
+    )
+    
+    // Recalculate dashboard stats
+    updateDashboardStats()
   }
 
   const handleEditItem = (item: InventoryItem) => {
@@ -123,26 +142,25 @@ export default function WarehouseManagementPage() {
     })
   }
 
-  const getTaskPriorityVariant = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'destructive'
-      case 'medium': return 'warning'
-      case 'low': return 'default'
-      default: return 'secondary'
-    }
+  const handleUpdateTask = (updatedTask: Task) => {
+    setTasks(prev => 
+      prev.map(task => task.id === updatedTask.id ? updatedTask : task)
+    )
   }
 
-  const getTaskStatusVariant = (status: string) => {
-    switch (status) {
-      case 'completed': return 'default'
-      case 'in-progress': return 'warning'
-      case 'pending': return 'secondary'
-      default: return 'secondary'
+  const handleCreateTask = (newTaskData: Omit<Task, 'id' | 'createdAt'>) => {
+    const newTask: Task = {
+      ...newTaskData,
+      id: crypto.randomUUID(),
+      createdAt: new Date().toISOString()
     }
+    setTasks(prev => [...prev, newTask])
   }
+
+
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-stone-100 via-slate-50 to-blue-50 dark:from-slate-900 dark:via-blue-900 dark:to-purple-900">
       <Header 
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -173,7 +191,7 @@ export default function WarehouseManagementPage() {
 
             <div className="grid gap-6 md:grid-cols-2">
               {/* Recent Sales */}
-              <Card>
+              <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <ShoppingCart className="h-5 w-5" />
@@ -205,7 +223,7 @@ export default function WarehouseManagementPage() {
               </Card>
 
               {/* Categories Overview */}
-              <Card>
+              <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <Tag className="h-5 w-5" />
@@ -302,7 +320,7 @@ export default function WarehouseManagementPage() {
               {sales.map((sale) => {
                 const item = inventoryItems.find(i => i.id === sale.inventoryItemId)
                 return (
-                  <Card key={sale.id}>
+                  <Card key={sale.id} className="bg-white/60 dark:bg-slate-700/60 backdrop-blur border border-white/30 dark:border-slate-600/50">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
@@ -332,47 +350,13 @@ export default function WarehouseManagementPage() {
           </TabsContent>
 
           {/* Tasks Tab */}
-          <TabsContent value="tasks" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold tracking-tight">Tasks</h2>
-              <Button>Add New Task</Button>
-            </div>
-
-            <div className="space-y-4">
-              {mockTasks.map((task) => {
-                const assignee = mockTeamMembers.find(member => member.id === task.assigneeId)
-                return (
-                  <Card key={task.id}>
-                    <CardContent className="pt-6">
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-2 flex-1">
-                          <div className="flex items-center space-x-2">
-                            <h3 className="font-semibold">{task.title}</h3>
-                            <Badge variant={getTaskStatusVariant(task.status)}>
-                              {task.status.replace('-', ' ').toUpperCase()}
-                            </Badge>
-                            <Badge variant={getTaskPriorityVariant(task.priority)}>
-                              {task.priority.toUpperCase()}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">{task.description}</p>
-                          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                            <div className="flex items-center space-x-1">
-                              <Users className="h-3 w-3" />
-                              <span>Assigned to: {assignee?.name}</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Calendar className="h-3 w-3" />
-                              <span>Due: {formatDate(task.dueDate)}</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                )
-              })}
-            </div>
+          <TabsContent value="tasks">
+            <TaskBoard 
+              tasks={tasks}
+              teamMembers={mockTeamMembers}
+              onUpdateTask={handleUpdateTask}
+              onCreateTask={handleCreateTask}
+            />
           </TabsContent>
 
           {/* Locations Tab */}
@@ -384,7 +368,7 @@ export default function WarehouseManagementPage() {
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {mockLocations.map((location) => (
-                <Card key={location.id}>
+                <Card key={location.id} className="bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-sm">
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="flex items-center space-x-2">
@@ -435,7 +419,7 @@ export default function WarehouseManagementPage() {
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {mockTeamMembers.map((member) => (
-                <Card key={member.id}>
+                <Card key={member.id} className="bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-sm">
                   <CardContent className="pt-6">
                     <div className="flex items-center space-x-3">
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
@@ -465,6 +449,14 @@ export default function WarehouseManagementPage() {
         open={addCategoryOpen}
         onOpenChange={setAddCategoryOpen}
         onAddCategory={handleAddCategory}
+      />
+
+      <AddItemModal
+        open={addItemOpen}
+        onOpenChange={setAddItemOpen}
+        onAddItem={handleCreateItem}
+        categories={categories}
+        locations={mockLocations}
       />
 
       <EditItemModal

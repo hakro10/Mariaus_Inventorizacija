@@ -60,7 +60,7 @@ export function DashboardStatsComponent({ stats }: DashboardStatsProps) {
       {statCards.map((stat, index) => {
         const IconComponent = stat.icon
         return (
-          <Card key={index} className="transition-shadow hover:shadow-md">
+          <Card key={index} className="transition-all hover:shadow-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
               <IconComponent className={`h-4 w-4 ${stat.color}`} />

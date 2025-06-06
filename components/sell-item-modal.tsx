@@ -85,9 +85,11 @@ export function SellItemModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-900 border-0">
         <DialogHeader>
-          <DialogTitle>Sell Item</DialogTitle>
+          <DialogTitle className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            Sell Item
+          </DialogTitle>
           <DialogDescription>
             Record a sale for {item.name} (Available: {item.quantity} units)
           </DialogDescription>
@@ -191,6 +193,7 @@ export function SellItemModal({
                 formData.quantityToSell > item.quantity ||
                 formData.salePrice <= 0
               }
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
             >
               Complete Sale
             </Button>

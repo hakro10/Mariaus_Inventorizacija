@@ -282,7 +282,7 @@ export const mockTasks: Task[] = [
   {
     id: generateId(),
     title: 'Inventory Audit - Zone 1',
-    description: 'Complete physical count of all items in Zone 1',
+    description: 'Complete physical count of all items in Zone 1 electronics section',
     status: 'in-progress',
     priority: 'high',
     assigneeId: mockTeamMembers[1].id,
@@ -292,12 +292,52 @@ export const mockTasks: Task[] = [
   {
     id: generateId(),
     title: 'Restock Office Chairs',
-    description: 'Order new office chairs - running low on inventory',
-    status: 'pending',
+    description: 'Order new office chairs - running low on inventory. Contact supplier.',
+    status: 'todo',
     priority: 'medium',
     assigneeId: mockTeamMembers[2].id,
     dueDate: '2024-01-30',
     createdAt: '2024-01-26T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    title: 'Update QR Code Labels',
+    description: 'Print and apply new QR codes to recently moved items',
+    status: 'done',
+    priority: 'low',
+    assigneeId: mockTeamMembers[0].id,
+    dueDate: '2024-01-25',
+    createdAt: '2024-01-20T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    title: 'System Backup & Maintenance',
+    description: 'Perform monthly system backup and database maintenance tasks',
+    status: 'todo',
+    priority: 'high',
+    assigneeId: mockTeamMembers[0].id,
+    dueDate: '2024-02-05',
+    createdAt: '2024-01-27T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    title: 'Train New Employee',
+    description: 'Conduct orientation training for new warehouse staff member',
+    status: 'in-progress',
+    priority: 'medium',
+    assigneeId: mockTeamMembers[1].id,
+    dueDate: '2024-02-03',
+    createdAt: '2024-01-28T00:00:00Z'
+  },
+  {
+    id: generateId(),
+    title: 'Review Supplier Contracts',
+    description: 'Annual review of supplier contracts and pricing agreements',
+    status: 'done',
+    priority: 'medium',
+    assigneeId: mockTeamMembers[0].id,
+    dueDate: '2024-01-20',
+    createdAt: '2024-01-15T00:00:00Z'
   }
 ]
 

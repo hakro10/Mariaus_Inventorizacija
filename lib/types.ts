@@ -11,6 +11,7 @@ export interface InventoryItem {
   status: 'in-stock' | 'low-stock' | 'out-of-stock' | 'sold' | 'damaged'
   minStockLevel?: number
   internalId: string
+  qrCode?: string
   createdAt: string
   updatedAt: string
 }
@@ -55,7 +56,7 @@ export interface Task {
   id: string
   title: string
   description: string
-  status: 'pending' | 'in-progress' | 'completed'
+  status: 'todo' | 'in-progress' | 'done'
   priority: 'low' | 'medium' | 'high'
   assigneeId: string
   dueDate: string
