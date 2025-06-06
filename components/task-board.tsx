@@ -277,7 +277,7 @@ function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask }: Colum
       
       <div 
         ref={setNodeRef}
-        className={`flex-1 rounded-lg p-3 transition-colors border overflow-y-auto ${
+        className={`flex-1 rounded-lg p-3 transition-colors border overflow-y-auto scrollbar scrollbar-thumb-slate-400 scrollbar-track-slate-200 dark:scrollbar-thumb-slate-600 dark:scrollbar-track-slate-800 scrollbar-thin hover:scrollbar-thumb-slate-500 dark:hover:scrollbar-thumb-slate-500 ${
           isHistoryColumn 
             ? 'bg-slate-100 dark:bg-slate-800/20 border-slate-300 dark:border-slate-600' 
             : 'bg-slate-50 dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/50'
@@ -286,8 +286,6 @@ function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask }: Colum
         }`}
         style={{
           maxHeight: 'calc(100vh - 320px)',
-          scrollbarWidth: 'thin',
-          scrollbarColor: '#94a3b8 #f1f5f9',
         }}
       >
         <SortableContext items={tasks.map(task => task.id)} strategy={verticalListSortingStrategy}>
