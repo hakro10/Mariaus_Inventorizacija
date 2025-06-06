@@ -44,36 +44,36 @@ const zone1Id = generateId()
 export const mockLocations: Location[] = [
   {
     id: warehouseAId,
-    name: 'Warehouse A',
-    description: 'Main warehouse facility',
+    name: 'Vilnius',
+    description: 'Pagrindinis miestas',
     level: 1,
     capacity: 1000,
     currentUsage: 750,
-    qrCode: 'LOC-WAR-L1-001',
+    qrCode: 'LOC-VIL-L1-001',
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
   },
   {
     id: zone1Id,
-    name: 'Zone 1',
-    description: 'Electronics zone',
+    name: 'Sandėlys Nr. 1',
+    description: 'Elektronikos sandėlys',
     level: 2,
     parentId: warehouseAId,
     capacity: 300,
     currentUsage: 245,
-    qrCode: 'LOC-ZON-L2-001',
+    qrCode: 'LOC-SAN-L2-001',
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
   },
   {
     id: generateId(),
-    name: 'Aisle A',
-    description: 'First aisle in Zone 1',
+    name: 'Sekcija A',
+    description: 'Pirmoji sekcija sandėlyje',
     level: 3,
     parentId: zone1Id,
     capacity: 100,
     currentUsage: 85,
-    qrCode: 'LOC-AIS-L3-001',
+    qrCode: 'LOC-SEK-L3-001',
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z'
   }

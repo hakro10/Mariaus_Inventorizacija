@@ -40,6 +40,25 @@ export function generateSerialNumber(prefix: string): string {
   return `${prefix}-${timestamp}-${random}`
 }
 
+// Get location level name by number
+export function getLocationLevelName(level: number): string {
+  const levelNames: { [key: number]: string } = {
+    1: 'Miestas',
+    2: 'Sandelys',
+    3: 'Lokacija - 1',
+    4: 'Lokacija - 2',
+    5: 'Lokacija - 3',
+    6: 'Lokacija - 4',
+    7: 'Lokacija - 5',
+    8: 'Lokacija - 6',
+    9: 'Lokacija - 7',
+    10: 'Lokacija - 8',
+    11: 'Lokacija - 9'
+  }
+  
+  return levelNames[level] || `Level ${level}`
+}
+
 // Utility to decode location QR codes
 export function decodeLocationQR(qrData: string): {
   locationId: string

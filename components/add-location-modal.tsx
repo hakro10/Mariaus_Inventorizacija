@@ -7,7 +7,7 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { Location } from "../lib/types"
-import { generateId } from "../lib/utils"
+import { generateId, getLocationLevelName } from "../lib/utils"
 import QRCode from "qrcode"
 
 interface AddLocationModalProps {
@@ -160,11 +160,17 @@ export function AddLocationModal({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="1">Level 1 (Warehouse)</SelectItem>
-                  <SelectItem value="2">Level 2 (Zone)</SelectItem>
-                  <SelectItem value="3">Level 3 (Aisle)</SelectItem>
-                  <SelectItem value="4">Level 4 (Shelf)</SelectItem>
-                  <SelectItem value="5">Level 5 (Bin)</SelectItem>
+                  <SelectItem value="1">Level 1 (Miestas)</SelectItem>
+                  <SelectItem value="2">Level 2 (Sandelys)</SelectItem>
+                  <SelectItem value="3">Level 3 (Lokacija - 1)</SelectItem>
+                  <SelectItem value="4">Level 4 (Lokacija - 2)</SelectItem>
+                  <SelectItem value="5">Level 5 (Lokacija - 3)</SelectItem>
+                  <SelectItem value="6">Level 6 (Lokacija - 4)</SelectItem>
+                  <SelectItem value="7">Level 7 (Lokacija - 5)</SelectItem>
+                  <SelectItem value="8">Level 8 (Lokacija - 6)</SelectItem>
+                  <SelectItem value="9">Level 9 (Lokacija - 7)</SelectItem>
+                  <SelectItem value="10">Level 10 (Lokacija - 8)</SelectItem>
+                  <SelectItem value="11">Level 11 (Lokacija - 9)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -192,7 +198,7 @@ export function AddLocationModal({
                 <SelectContent>
                   {availableParents.map(location => (
                     <SelectItem key={location.id} value={location.id}>
-                      {location.name} (Level {location.level})
+                      {location.name} ({getLocationLevelName(location.level)})
                     </SelectItem>
                   ))}
                 </SelectContent>

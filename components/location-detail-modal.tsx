@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog"
 import { Badge } from "./ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Location, InventoryItem } from "../lib/types"
-import { formatDate, formatCurrency } from "../lib/utils"
+import { formatDate, formatCurrency, getLocationLevelName } from "../lib/utils"
 import { MapPin, Package, QrCode, Calendar, Download, RefreshCw } from "lucide-react"
 import { Button } from "./ui/button"
 import QRCode from "qrcode"
@@ -130,7 +130,7 @@ export function LocationDetailModal({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Level</p>
-                    <p className="text-sm font-medium">Level {location.level}</p>
+                    <p className="text-sm font-medium">{getLocationLevelName(location.level)}</p>
                   </div>
                   
                   <div>

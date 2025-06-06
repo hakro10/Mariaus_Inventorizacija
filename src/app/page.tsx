@@ -26,7 +26,7 @@ import {
   mockDashboardStats 
 } from "../../lib/mock-data"
 import { InventoryItem, Category, Location, Sale, Task, TeamMember, DashboardStats } from "../../lib/types"
-import { formatCurrency, formatDate } from "../../lib/utils"
+import { formatCurrency, formatDate, getLocationLevelName } from "../../lib/utils"
 import { Package, Users, ClipboardList, MapPin, Tag, ShoppingCart, Calendar, Clock, AlertCircle, Plus } from "lucide-react"
 
 export default function WarehouseManagementPage() {
@@ -432,7 +432,7 @@ export default function WarehouseManagementPage() {
                             <Badge variant="outline" className="text-xs">{location.qrCode}</Badge>
                           )}
                           <Badge variant="secondary" className="text-xs">
-                            Level {location.level}
+                            {getLocationLevelName(location.level)}
                           </Badge>
                         </div>
                       </div>
