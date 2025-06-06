@@ -14,6 +14,7 @@ import { SellItemModal } from "../../components/sell-item-modal"
 import { TaskBoard } from "../../components/task-board"
 import { AddLocationModal } from "../../components/add-location-modal"
 import { LocationDetailModal } from "../../components/location-detail-modal"
+import { EditCategoryModal } from "../../components/edit-category-modal"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Badge } from "../../components/ui/badge"
 import { 
@@ -27,7 +28,7 @@ import {
 } from "../../lib/mock-data"
 import { InventoryItem, Category, Location, Sale, Task, TeamMember, DashboardStats } from "../../lib/types"
 import { formatCurrency, formatDate, getLocationLevelName } from "../../lib/utils"
-import { Package, Users, ClipboardList, MapPin, Tag, ShoppingCart, Calendar, Clock, AlertCircle, Plus } from "lucide-react"
+import { Package, Users, ClipboardList, MapPin, Tag, ShoppingCart, Calendar, Clock, AlertCircle, Plus, Edit, Trash2 } from "lucide-react"
 
 export default function WarehouseManagementPage() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>(mockInventoryItems)
@@ -42,6 +43,7 @@ export default function WarehouseManagementPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [addItemOpen, setAddItemOpen] = useState(false)
   const [addCategoryOpen, setAddCategoryOpen] = useState(false)
+  const [editCategoryOpen, setEditCategoryOpen] = useState(false)
   const [addMemberOpen, setAddMemberOpen] = useState(false)
   const [addLocationOpen, setAddLocationOpen] = useState(false)
   const [editItemOpen, setEditItemOpen] = useState(false)
@@ -49,6 +51,7 @@ export default function WarehouseManagementPage() {
   const [locationDetailOpen, setLocationDetailOpen] = useState(false)
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null)
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  const [selectedCategoryForEdit, setSelectedCategoryForEdit] = useState<Category | null>(null)
 
   // Team member for sales
   const currentUser = teamMembers[1] // Sarah Johnson as default user
@@ -98,6 +101,40 @@ export default function WarehouseManagementPage() {
     setCategories(prev => [...prev, newCategory])
   }
 
+  const handleEditCategory = (category: Category) => {
+    setSelectedCategoryForEdit(category)
+    setEditCategoryOpen(true)
+  }
+
+  const handleUpdateCategory = (updatedCategory: Category) => {
+    setCategories(prev => 
+      prev.map(category => 
+        category.id === updatedCategory.id ? updatedCategory : category
+      )
+    )
+  }
+
+  const handleDeleteCategory = (categoryToDelete: Category) => {
+    if (confirm(`Are you sure you want to delete the category "${categoryToDelete.name}"? Items in this category will become uncategorized.`)) {
+      // Remove category from items
+      setInventoryItems(prev => 
+        prev.map(item => 
+          item.categoryId === categoryToDelete.id 
+            ? { ...item, categoryId: undefined }
+            : item
+        )
+      )
+      
+      // Remove category
+      setCategories(prev => prev.filter(category => category.id !== categoryToDelete.id))
+      
+      // Clear selection if this category was selected
+      if (selectedCategory === categoryToDelete.id) {
+        setSelectedCategory(null)
+      }
+    }
+  }
+
   const handleAddMember = (newMemberData: Omit<TeamMember, 'id' | 'createdAt'>) => {
     const newMember: TeamMember = {
       ...newMemberData,
@@ -111,6 +148,24 @@ export default function WarehouseManagementPage() {
     setInventoryItems(prev => 
       prev.map(item => item.id === updatedItem.id ? updatedItem : item)
     )
+    
+    // Recalculate dashboard stats
+    updateDashboardStats()
+  }
+
+  const handleDeleteItem = (itemToDelete: InventoryItem) => {
+    setInventoryItems(prev => prev.filter(item => item.id !== itemToDelete.id))
+    
+    // Update category item count
+    if (itemToDelete.categoryId) {
+      setCategories(prev => 
+        prev.map(category => 
+          category.id === itemToDelete.categoryId 
+            ? { ...category, itemCount: Math.max(0, category.itemCount - 1) }
+            : category
+        )
+      )
+    }
     
     // Recalculate dashboard stats
     updateDashboardStats()
@@ -304,18 +359,56 @@ export default function WarehouseManagementPage() {
           </TabsContent>
 
           {/* Inventory Tab */}
-          <TabsContent value="inventory" className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <TabsContent value="inventory" className="flex-1 flex flex-col min-h-0">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
               <h2 className="text-3xl font-bold tracking-tight">Inventory</h2>
               <div className="flex items-center space-x-2">
                 <div className="text-sm text-muted-foreground">
                   {filteredItems.length} of {inventoryItems.length} items
                 </div>
+                <Button onClick={() => setAddItemOpen(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                  <Package className="h-4 w-4 mr-2" />
+                  Add Item
+                </Button>
+                <Button 
+                  onClick={() => setAddCategoryOpen(true)}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Category
+                </Button>
+                {categories.length > 0 && (
+                  <Button 
+                    variant="outline"
+                    onClick={() => {
+                      if (categories.length === 0) {
+                        alert("No categories to delete!")
+                        return
+                      }
+                      
+                      const categoryNames = categories.map(cat => `${cat.name} (${cat.itemCount} items)`).join('\n')
+                      const categoryToDelete = prompt(`Select category to delete by typing its exact name:\n\n${categoryNames}\n\nCategory name:`)
+                      
+                      if (categoryToDelete) {
+                        const foundCategory = categories.find(cat => cat.name.toLowerCase() === categoryToDelete.toLowerCase())
+                        if (foundCategory) {
+                          handleDeleteCategory(foundCategory)
+                        } else {
+                          alert("Category not found! Please type the exact category name.")
+                        }
+                      }
+                    }}
+                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 hover:border-red-300 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Delete Category
+                  </Button>
+                )}
               </div>
             </div>
 
             {/* Category Filter */}
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mb-6 flex-shrink-0">
               <Button
                 variant={selectedCategory === null ? "default" : "outline"}
                 size="sm"
@@ -324,39 +417,55 @@ export default function WarehouseManagementPage() {
                 All Categories
               </Button>
               {categories.map((category) => (
-                <Button
-                  key={category.id}
-                  variant={selectedCategory === category.id ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category.id)}
-                >
-                  <div 
-                    className="w-2 h-2 rounded-full mr-2" 
-                    style={{ backgroundColor: category.color }}
-                  />
-                  {category.name}
-                </Button>
+                <div key={category.id} className="flex items-center gap-1">
+                  <Button
+                    variant={selectedCategory === category.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category.id)}
+                  >
+                    <div 
+                      className="w-2 h-2 rounded-full mr-2" 
+                      style={{ backgroundColor: category.color }}
+                    />
+                    {category.name}
+                  </Button>
+                  {selectedCategory === category.id && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                      onClick={() => handleEditCategory(category)}
+                      title="Edit this category"
+                    >
+                      <Edit className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
               ))}
             </div>
 
-            <InventoryGrid 
-              items={filteredItems}
-              categories={categories}
-              locations={locations}
-              onEditItem={handleEditItem}
-              onSellItem={handleSellItem}
-            />
+            <div className="flex-1 overflow-y-auto min-h-0">
+              <InventoryGrid 
+                items={filteredItems}
+                categories={categories}
+                locations={locations}
+                onEditItem={handleEditItem}
+                onSellItem={handleSellItem}
+                onDeleteItem={handleDeleteItem}
+              />
+            </div>
           </TabsContent>
 
           {/* Sales Tab */}
-          <TabsContent value="sales" className="space-y-6">
-            <div className="flex items-center justify-between">
+          <TabsContent value="sales" className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between flex-shrink-0 mb-6">
               <h2 className="text-3xl font-bold tracking-tight">Sales History</h2>
               <Button>Record New Sale</Button>
             </div>
 
-            <div className="space-y-4">
-              {sales.map((sale) => {
+            <div className="flex-1 overflow-y-auto min-h-0">
+              <div className="space-y-4">
+                {sales.map((sale) => {
                 const item = inventoryItems.find(i => i.id === sale.inventoryItemId)
                 return (
                   <Card key={sale.id} className="bg-white/60 dark:bg-slate-700/60 backdrop-blur border border-white/30 dark:border-slate-600/50">
@@ -385,6 +494,7 @@ export default function WarehouseManagementPage() {
                   </Card>
                 )
               })}
+              </div>
             </div>
           </TabsContent>
 
@@ -401,8 +511,8 @@ export default function WarehouseManagementPage() {
           </TabsContent>
 
           {/* Locations Tab */}
-          <TabsContent value="locations" className="space-y-6">
-            <div className="flex items-center justify-between">
+          <TabsContent value="locations" className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between flex-shrink-0 mb-6">
               <h2 className="text-3xl font-bold tracking-tight">Locations</h2>
               <Button onClick={() => setAddLocationOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
@@ -410,7 +520,8 @@ export default function WarehouseManagementPage() {
               </Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex-1 overflow-y-auto min-h-0">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {locations.map((location) => {
                 const locationItems = inventoryItems.filter(item => item.locationId === location.id)
                 const currentUsage = locationItems.length
@@ -482,17 +593,19 @@ export default function WarehouseManagementPage() {
                   </Card>
                 )
               })}
+              </div>
             </div>
           </TabsContent>
 
           {/* Team Tab */}
-          <TabsContent value="team" className="space-y-6">
-            <div className="flex items-center justify-between">
+          <TabsContent value="team" className="flex-1 flex flex-col min-h-0">
+            <div className="flex items-center justify-between flex-shrink-0 mb-6">
               <h2 className="text-3xl font-bold tracking-tight">Team Members</h2>
               <Button onClick={() => setAddMemberOpen(true)}>Add Member</Button>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex-1 overflow-y-auto min-h-0">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {teamMembers.map((member) => {
                 const getStatusColor = (status: string) => {
                   switch (status) {
@@ -563,6 +676,7 @@ export default function WarehouseManagementPage() {
                   </Card>
                 )
               })}
+              </div>
             </div>
           </TabsContent>
         </Tabs>
@@ -619,6 +733,13 @@ export default function WarehouseManagementPage() {
         onOpenChange={setLocationDetailOpen}
         inventoryItems={inventoryItems}
         onUpdateLocationQR={handleUpdateLocationQR}
+      />
+
+      <EditCategoryModal
+        open={editCategoryOpen}
+        onOpenChange={setEditCategoryOpen}
+        category={selectedCategoryForEdit}
+        onUpdateCategory={handleUpdateCategory}
       />
     </div>
   )

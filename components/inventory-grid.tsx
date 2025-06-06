@@ -1,6 +1,6 @@
 "use client"
 
-import { Package, MapPin, Calendar, DollarSign, Hash } from "lucide-react"
+import { Package, MapPin, Calendar, DollarSign, Hash, ShoppingBasket, Edit, Trash2 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { Button } from "./ui/button"
@@ -13,9 +13,10 @@ interface InventoryGridProps {
   locations: Location[]
   onEditItem: (item: InventoryItem) => void
   onSellItem: (item: InventoryItem) => void
+  onDeleteItem: (item: InventoryItem) => void
 }
 
-export function InventoryGrid({ items, categories, locations, onEditItem, onSellItem }: InventoryGridProps) {
+export function InventoryGrid({ items, categories, locations, onEditItem, onSellItem, onDeleteItem }: InventoryGridProps) {
   const getCategoryName = (categoryId?: string) => {
     const category = categories.find(c => c.id === categoryId)
     return category?.name || 'Uncategorized'
@@ -127,18 +128,33 @@ export function InventoryGrid({ items, categories, locations, onEditItem, onSell
               <Button 
                 variant="outline" 
                 size="sm" 
-                className="flex-1"
+                className="flex-1 border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-900/20"
                 onClick={() => onEditItem(item)}
               >
+                <Edit className="h-3 w-3 mr-1" />
                 Edit
               </Button>
               <Button 
                 size="sm" 
-                className="flex-1"
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
                 onClick={() => onSellItem(item)}
                 disabled={item.status === 'sold' || item.quantity === 0}
               >
+                <ShoppingBasket className="h-3 w-3 mr-1" />
                 Sell
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700 dark:border-red-800 dark:text-red-400 dark:hover:bg-red-900/20"
+                onClick={() => {
+                  if (confirm(`Are you sure you want to delete "${item.name}"? This action cannot be undone.`)) {
+                    onDeleteItem(item)
+                  }
+                }}
+              >
+                <Trash2 className="h-3 w-3 mr-1" />
+                Delete
               </Button>
             </div>
           </CardContent>
