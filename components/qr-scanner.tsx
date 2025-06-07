@@ -184,32 +184,32 @@ export function QRScanner({ onScanSuccess, onScanError }: QRScannerProps) {
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Scan className="h-5 w-5" />
             QR Code Scanner
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm">
             Scan QR codes using your camera or external scanner
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Scanner Mode Selection */}
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Button
               variant={scanMode === 'camera' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setScanMode('camera')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 justify-center"
             >
               <Camera className="h-4 w-4" />
-              Camera
+              <span className="text-xs sm:text-sm">Camera</span>
             </Button>
             <Button
               variant={scanMode === 'external' ? 'default' : 'outline'}
               size="sm"
               onClick={() => setScanMode('external')}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 justify-center"
               disabled={!externalScannerConnected}
             >
               {externalScannerConnected ? (
@@ -217,7 +217,7 @@ export function QRScanner({ onScanSuccess, onScanError }: QRScannerProps) {
               ) : (
                 <WifiOff className="h-4 w-4" />
               )}
-              External Scanner
+              <span className="text-xs sm:text-sm">External Scanner</span>
             </Button>
           </div>
 
@@ -274,12 +274,12 @@ export function QRScanner({ onScanSuccess, onScanError }: QRScannerProps) {
           {/* Camera Scanner */}
           {scanMode === 'camera' && (
             <div className="space-y-3">
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex flex-col sm:flex-row gap-2">
                 {!isScanning ? (
                   <>
-                    <Button onClick={startCameraScanning} className="flex items-center gap-2">
+                    <Button onClick={startCameraScanning} className="flex items-center gap-2 justify-center">
                       <Camera className="h-4 w-4" />
-                      Start Camera Scanner
+                      <span className="text-sm">Start Camera Scanner</span>
                     </Button>
                     <input
                       type="file"
@@ -291,13 +291,13 @@ export function QRScanner({ onScanSuccess, onScanError }: QRScannerProps) {
                     <Button 
                       onClick={() => document.getElementById('qr-file-input')?.click()}
                       variant="outline"
-                      className="flex items-center gap-2"
+                      className="flex items-center gap-2 justify-center"
                     >
-                      📷 Upload QR Image
+                      📷 <span className="text-sm">Upload QR Image</span>
                     </Button>
                   </>
                 ) : (
-                  <Button onClick={stopScanning} variant="secondary">
+                  <Button onClick={stopScanning} variant="secondary" className="w-full sm:w-auto">
                     Stop Scanner
                   </Button>
                 )}

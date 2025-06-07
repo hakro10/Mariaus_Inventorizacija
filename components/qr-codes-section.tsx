@@ -158,31 +158,31 @@ export function QRCodesSection({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">QR Codes</h2>
-          <p className="text-muted-foreground">Scan and generate QR codes for inventory management</p>
+    <div className="space-y-4 sm:space-y-6 p-2 sm:p-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+        <div className="min-w-0">
+          <h2 className="text-xl sm:text-2xl font-bold truncate">QR Codes</h2>
+          <p className="text-sm sm:text-base text-muted-foreground">Scan and generate QR codes for inventory management</p>
         </div>
-        <Badge variant="secondary" className="flex items-center gap-1">
+        <Badge variant="secondary" className="flex items-center gap-1 self-start sm:self-auto flex-shrink-0">
           <History className="h-3 w-3" />
-          {history.length} items
+          <span className="text-xs">{history.length} items</span>
         </Badge>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="scanner" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 h-auto">
+          <TabsTrigger value="scanner" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-1.5">
             <Scan className="h-4 w-4" />
-            Scanner
+            <span className="text-xs sm:text-sm">Scanner</span>
           </TabsTrigger>
-          <TabsTrigger value="generator" className="flex items-center gap-2">
+          <TabsTrigger value="generator" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-1.5">
             <QrCode className="h-4 w-4" />
-            Generator
+            <span className="text-xs sm:text-sm">Generator</span>
           </TabsTrigger>
-          <TabsTrigger value="history" className="flex items-center gap-2">
+          <TabsTrigger value="history" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 py-2 sm:py-1.5">
             <History className="h-4 w-4" />
-            History
+            <span className="text-xs sm:text-sm">History</span>
           </TabsTrigger>
         </TabsList>
 

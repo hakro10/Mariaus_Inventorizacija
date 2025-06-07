@@ -316,30 +316,30 @@ export function QRGenerator({ onQRGenerated }: QRGeneratorProps) {
   return (
     <div className="space-y-4">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <QrCode className="h-5 w-5" />
             QR Code Generator
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-sm">
             Generate QR codes for inventory items, locations, URLs, and custom data
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Data Type Selection */}
           <div className="space-y-2">
-            <Label>Data Type</Label>
-            <div className="flex flex-wrap gap-2">
+            <Label className="text-sm font-medium">Data Type</Label>
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
               {(['text', 'url', 'inventory', 'location', 'custom'] as QRDataType[]).map((type) => (
                 <Button
                   key={type}
                   variant={dataType === type ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setDataType(type)}
-                  className="flex items-center gap-2 capitalize"
+                  className="flex items-center gap-1 sm:gap-2 capitalize text-xs sm:text-sm justify-center"
                 >
                   {getDataTypeIcon(type)}
-                  {type}
+                  <span>{type}</span>
                 </Button>
               ))}
             </div>
@@ -414,14 +414,14 @@ export function QRGenerator({ onQRGenerated }: QRGeneratorProps) {
           <Button 
             onClick={generateQRCode} 
             disabled={isGenerating}
-            className="w-full flex items-center gap-2"
+            className="w-full flex items-center justify-center gap-2 py-3 text-sm sm:text-base"
           >
             {isGenerating ? (
               <RefreshCw className="h-4 w-4 animate-spin" />
             ) : (
               <QrCode className="h-4 w-4" />
             )}
-            {isGenerating ? 'Generating...' : 'Generate QR Code'}
+            <span>{isGenerating ? 'Generating...' : 'Generate QR Code'}</span>
           </Button>
 
           {/* Error Display */}
@@ -438,18 +438,18 @@ export function QRGenerator({ onQRGenerated }: QRGeneratorProps) {
                 <img src={generatedQR} alt="Generated QR Code" className="max-w-full" />
               </div>
               
-              <div className="flex gap-2">
-                <Button onClick={downloadQRCode} variant="outline" size="sm" className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Button onClick={downloadQRCode} variant="outline" size="sm" className="flex items-center justify-center gap-2">
                   <Download className="h-4 w-4" />
-                  Download
+                  <span className="text-xs sm:text-sm">Download</span>
                 </Button>
-                <Button onClick={copyQRData} variant="outline" size="sm" className="flex items-center gap-2">
+                <Button onClick={copyQRData} variant="outline" size="sm" className="flex items-center justify-center gap-2">
                   <Copy className="h-4 w-4" />
-                  Copy Data
+                  <span className="text-xs sm:text-sm">Copy Data</span>
                 </Button>
-                <Button onClick={copyQRImage} variant="outline" size="sm" className="flex items-center gap-2">
+                <Button onClick={copyQRImage} variant="outline" size="sm" className="flex items-center justify-center gap-2">
                   <Copy className="h-4 w-4" />
-                  Copy Image
+                  <span className="text-xs sm:text-sm">Copy Image</span>
                 </Button>
               </div>
 
