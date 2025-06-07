@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   DndContext,
   DragEndEvent,
@@ -25,12 +25,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { Button } from "./ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { Task, TeamMember } from "../lib/types"
 import { formatDate } from "../lib/utils"
-import { Plus, Users, Calendar, GripVertical, Clock, MessageSquare, Tag, User, Trash2, Archive } from "lucide-react"
+import { Plus, Users, Calendar, GripVertical, Clock, MessageSquare, Tag, User, Trash2, Archive, MoreVertical, ArrowRight } from "lucide-react"
 
 interface TaskBoardProps {
   tasks: Task[]
@@ -59,9 +60,21 @@ interface TaskCardProps {
   teamMembers: TeamMember[]
   onTaskClick?: (task: Task) => void
   onDeleteTask?: (taskId: string) => void
+  onMoveTask?: (taskId: string, newStatus: Task['status']) => void
 }
 
-function TaskCard({ task, teamMembers, onTaskClick, onDeleteTask }: TaskCardProps) {
+function TaskCard({ task, teamMembers, onTaskClick, onDeleteTask, onMoveTask }: TaskCardProps) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768) // md breakpoint
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
   const {
     attributes,
     listeners,
@@ -141,6 +154,32 @@ function TaskCard({ task, teamMembers, onTaskClick, onDeleteTask }: TaskCardProp
                 {isHistoryTask && (
                   <Archive className="h-4 w-4 text-muted-foreground" />
                 )}
+                {!isHistoryTask && isMobile && onMoveTask && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 md:opacity-100 transition-opacity hover:bg-blue-100 hover:text-blue-600 dark:hover:bg-blue-900/20"
+                      >
+                        <MoreVertical className="h-3 w-3" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {columns
+                        .filter(col => col.status !== task.status && col.status !== 'history')
+                        .map(col => (
+                          <DropdownMenuItem 
+                            key={col.id}
+                            onClick={() => onMoveTask(task.id, col.status)}
+                          >
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            Move to {col.title}
+                          </DropdownMenuItem>
+                        ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
                 {!isHistoryTask && onDeleteTask && (
                   <Button
                     variant="ghost"
@@ -151,7 +190,7 @@ function TaskCard({ task, teamMembers, onTaskClick, onDeleteTask }: TaskCardProp
                     <Trash2 className="h-3 w-3" />
                   </Button>
                 )}
-                {!isHistoryTask && <GripVertical className="h-4 w-4 text-muted-foreground" />}
+                {!isHistoryTask && !isMobile && <GripVertical className="h-4 w-4 text-muted-foreground" />}
               </div>
             </div>
             {task.tags && task.tags.length > 0 && (
@@ -253,9 +292,10 @@ interface ColumnProps {
   teamMembers: TeamMember[]
   onTaskClick?: (task: Task) => void
   onDeleteTask?: (taskId: string) => void
+  onMoveTask?: (taskId: string, newStatus: Task['status']) => void
 }
 
-function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask }: ColumnProps) {
+function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask, onMoveTask }: ColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: column.id,
     disabled: column.id === 'history', // Disable drop for history column
@@ -301,6 +341,7 @@ function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask }: Colum
               teamMembers={teamMembers} 
               onTaskClick={onTaskClick}
               onDeleteTask={undefined}
+              onMoveTask={onMoveTask}
             />
           ))}
         </div>
@@ -350,12 +391,13 @@ function Column({ column, tasks, teamMembers, onTaskClick, onDeleteTask }: Colum
           ) : (
             <div className="space-y-3">
               {tasks.map(task => (
-                <TaskCard 
+                                <TaskCard 
                   key={task.id} 
                   task={task} 
-                  teamMembers={teamMembers} 
+                  teamMembers={teamMembers}
                   onTaskClick={onTaskClick}
                   onDeleteTask={onDeleteTask}
+                  onMoveTask={onMoveTask}
                 />
               ))}
               {tasks.length === 0 && (
@@ -809,6 +851,35 @@ export function TaskBoard({ tasks, teamMembers, onUpdateTask, onCreateTask, onDe
     setIsDetailModalOpen(true)
   }
 
+  const handleMoveTask = (taskId: string, newStatus: Task['status']) => {
+    const task = tasks.find(t => t.id === taskId)
+    if (!task || task.status === 'history' || newStatus === 'history') return
+    
+    const updatedTask = { ...task, status: newStatus, updatedAt: new Date().toISOString() }
+    onUpdateTask(updatedTask)
+    
+    // If task is moved to 'done', automatically create a copy in history
+    if (newStatus === 'done' && onCreateHistoryTask) {
+      const historyTask: Task = {
+        ...updatedTask,
+        id: `${task.id}-history-${Date.now()}`,
+        status: 'history',
+        updatedAt: new Date().toISOString(),
+        comments: [
+          ...(task.comments || []),
+          {
+            id: `comment-${Date.now()}`,
+            taskId: '',
+            authorId: task.assigneeId,
+            content: `Task completed and archived on ${new Date().toLocaleDateString()}`,
+            createdAt: new Date().toISOString()
+          }
+        ]
+      }
+      onCreateHistoryTask(historyTask)
+    }
+  }
+
   const getTasksByStatus = (status: Task['status']) => {
     return tasks.filter(task => task.status === status)
   }
@@ -835,6 +906,7 @@ export function TaskBoard({ tasks, teamMembers, onUpdateTask, onCreateTask, onDe
                   teamMembers={teamMembers}
                   onTaskClick={handleTaskClick}
                   onDeleteTask={onDeleteTask}
+                  onMoveTask={handleMoveTask}
                 />
               </div>
             ))}
