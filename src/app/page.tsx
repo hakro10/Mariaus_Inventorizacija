@@ -16,6 +16,7 @@ import { AddLocationModal } from "../../components/add-location-modal"
 import { LocationDetailModal } from "../../components/location-detail-modal"
 import { EditCategoryModal } from "../../components/edit-category-modal"
 import { ItemDetailModal } from "../../components/item-detail-modal"
+import { QRCodesSection } from "../../components/qr-codes-section"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../../components/ui/card"
 import { Badge } from "../../components/ui/badge"
 import { 
@@ -271,12 +272,13 @@ export default function WarehouseManagementPage() {
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 flex-1 flex flex-col min-h-0 overflow-hidden">
         <Tabs defaultValue="dashboard" className="space-y-6 flex-1 flex flex-col min-h-0">
           <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 flex-shrink-0">
-            <TabsTrigger value="dashboard" className="text-xs sm:text-sm">Dashboard</TabsTrigger>
-            <TabsTrigger value="inventory" className="text-xs sm:text-sm">Inventory</TabsTrigger>
-            <TabsTrigger value="sales" className="text-xs sm:text-sm">Sales</TabsTrigger>
-            <TabsTrigger value="tasks" className="text-xs sm:text-sm">Tasks</TabsTrigger>
-            <TabsTrigger value="locations" className="text-xs sm:text-sm">Locations</TabsTrigger>
-            <TabsTrigger value="team" className="text-xs sm:text-sm">Team</TabsTrigger>
+                            <TabsTrigger value="dashboard" className="text-xs sm:text-sm">Dashboard</TabsTrigger>
+                <TabsTrigger value="inventory" className="text-xs sm:text-sm">Inventory</TabsTrigger>
+                <TabsTrigger value="sales" className="text-xs sm:text-sm">Sales</TabsTrigger>
+                <TabsTrigger value="tasks" className="text-xs sm:text-sm">Tasks</TabsTrigger>
+                <TabsTrigger value="locations" className="text-xs sm:text-sm">Locations</TabsTrigger>
+                <TabsTrigger value="qrcodes" className="text-xs sm:text-sm">QR Codes</TabsTrigger>
+                <TabsTrigger value="team" className="text-xs sm:text-sm">Team</TabsTrigger>
           </TabsList>
 
           {/* Dashboard Tab */}
@@ -605,6 +607,18 @@ export default function WarehouseManagementPage() {
                 )
               })}
               </div>
+            </div>
+          </TabsContent>
+
+          {/* QR Codes Tab */}
+          <TabsContent value="qrcodes" className="flex-1 flex flex-col min-h-0">
+            <div className="flex-1 overflow-y-auto min-h-0">
+              <QRCodesSection 
+                inventoryItems={inventoryItems}
+                locations={locations}
+                onItemFound={handleItemClick}
+                onLocationFound={handleLocationClick}
+              />
             </div>
           </TabsContent>
 
