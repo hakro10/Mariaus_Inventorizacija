@@ -268,15 +268,15 @@ export default function WarehouseManagementPage() {
         onAddItem={handleAddItem}
       />
       
-      <main className="container mx-auto px-4 py-6 flex-1 flex flex-col min-h-0 overflow-hidden">
+      <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 flex-1 flex flex-col min-h-0 overflow-hidden">
         <Tabs defaultValue="dashboard" className="space-y-6 flex-1 flex flex-col min-h-0">
-          <TabsList className="grid w-full grid-cols-6 flex-shrink-0">
-            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-            <TabsTrigger value="inventory">Inventory</TabsTrigger>
-            <TabsTrigger value="sales">Sales</TabsTrigger>
-            <TabsTrigger value="tasks">Tasks</TabsTrigger>
-            <TabsTrigger value="locations">Locations</TabsTrigger>
-            <TabsTrigger value="team">Team</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 flex-shrink-0">
+            <TabsTrigger value="dashboard" className="text-xs sm:text-sm">Dashboard</TabsTrigger>
+            <TabsTrigger value="inventory" className="text-xs sm:text-sm">Inventory</TabsTrigger>
+            <TabsTrigger value="sales" className="text-xs sm:text-sm">Sales</TabsTrigger>
+            <TabsTrigger value="tasks" className="text-xs sm:text-sm">Tasks</TabsTrigger>
+            <TabsTrigger value="locations" className="text-xs sm:text-sm">Locations</TabsTrigger>
+            <TabsTrigger value="team" className="text-xs sm:text-sm">Team</TabsTrigger>
           </TabsList>
 
           {/* Dashboard Tab */}
@@ -290,7 +290,7 @@ export default function WarehouseManagementPage() {
             
             <DashboardStatsComponent stats={dashboardStats} />
 
-            <div className="grid gap-6 md:grid-cols-2">
+            <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
               {/* Recent Sales */}
               <Card className="bg-white/80 dark:bg-slate-800/80 backdrop-blur border border-white/20 dark:border-slate-700/50 shadow-sm">
                 <CardHeader>
@@ -367,12 +367,15 @@ export default function WarehouseManagementPage() {
 
           {/* Inventory Tab */}
           <TabsContent value="inventory" className="flex-1 flex flex-col min-h-0">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
-              <h2 className="text-3xl font-bold tracking-tight">Inventory</h2>
-              <div className="flex items-center space-x-2">
+            <div className="flex flex-col gap-4 flex-shrink-0">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Inventory</h2>
                 <div className="text-sm text-muted-foreground">
                   {filteredItems.length} of {inventoryItems.length} items
                 </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                 <Button onClick={() => setAddItemOpen(true)} className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
                   <Package className="h-4 w-4 mr-2" />
                   Add Item
@@ -529,7 +532,7 @@ export default function WarehouseManagementPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto min-h-0">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {locations.map((location) => {
                 const locationItems = inventoryItems.filter(item => item.locationId === location.id)
                 const currentUsage = locationItems.length
@@ -613,7 +616,7 @@ export default function WarehouseManagementPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto min-h-0">
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {teamMembers.map((member) => {
                 const getStatusColor = (status: string) => {
                   switch (status) {

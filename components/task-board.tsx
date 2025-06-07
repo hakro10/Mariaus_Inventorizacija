@@ -8,6 +8,7 @@ import {
   DragOverlay,
   DragStartEvent,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   useDroppable,
@@ -732,6 +733,12 @@ export function TaskBoard({ tasks, teamMembers, onUpdateTask, onCreateTask, onDe
       activationConstraint: {
         distance: 8,
       },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 8,
+      },
     })
   )
 
@@ -819,7 +826,7 @@ export function TaskBoard({ tasks, teamMembers, onUpdateTask, onCreateTask, onDe
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 h-full">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 h-full">
             {columns.map(column => (
               <div key={column.id} id={column.id} className="flex flex-col min-h-0">
                 <Column

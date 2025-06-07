@@ -110,7 +110,7 @@ export function ItemDetailModal({
           </DialogDescription>
         </DialogHeader>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {/* Left Column - Item Details */}
           <div className="space-y-4">
             {/* Basic Info Card */}
